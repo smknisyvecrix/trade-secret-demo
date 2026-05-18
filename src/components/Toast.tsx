@@ -4,14 +4,14 @@ import { createContext, useContext, useState, ReactNode, useEffect } from 'react
 
 export type ToastType = 'success' | 'error' | 'info';
 
-interface Toast {
+interface ToastItem {
   id: number;
   message: string;
   type: ToastType;
 }
 
 interface ToastContextType {
-  toasts: Toast[];
+  toasts: ToastItem[];
   showToast: (message: string, type?: ToastType) => void;
   removeToast: (id: number) => void;
 }
@@ -19,7 +19,7 @@ interface ToastContextType {
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 export function ToastProvider({ children }: { children: ReactNode }) {
-  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
 
   const showToast = (message: string, type: ToastType = 'success') => {
     const id = Date.now();
@@ -46,7 +46,6 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// Hook for using toast
 export function useToast() {
   const context = useContext(ToastContext);
   if (context === undefined) {
