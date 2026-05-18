@@ -19,7 +19,7 @@ export function ToastContainer() {
             ${toast.type === 'info' ? 'bg-blue-500' : ''}
           `}
         >
-          <span>{toast.type === 'success' ? '✅' : toast.type === 'error' ? '' : 'ℹ️'}</span>
+          <span>{toast.type === 'success' ? '✅' : toast.type === 'error' ? '❌' : '️'}</span>
           <span>{toast.message}</span>
           <button
             onClick={() => removeToast(toast.id)}
