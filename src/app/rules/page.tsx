@@ -15,7 +15,9 @@ export default async function RulesPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">规则管理</h2>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">+ 导入规则</button>
+        <Link href="/rules/import" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          + 导入规则
+        </Link>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -53,7 +55,7 @@ export default async function RulesPage() {
             ) : (
               <tr>
                 <td colSpan={5} className="p-8 text-center text-gray-500">
-                  暂无规则，请导入律师制定的保护规则
+                  暂无规则，请点击右上角"导入规则"添加
                 </td>
               </tr>
             )}
