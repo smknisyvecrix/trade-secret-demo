@@ -1,6 +1,9 @@
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 
+// 强制每次访问都重新查询数据库
+export const dynamic = 'force-dynamic';
+
 export default async function SecretsPage() {
   const { data: secrets } = await supabase
     .from('trade_secrets')
@@ -29,7 +32,6 @@ export default async function SecretsPage() {
               <th className="p-4 font-medium text-gray-600">分类</th>
               <th className="p-4 font-medium text-gray-600">级别</th>
               <th className="p-4 font-medium text-gray-600">状态</th>
-              <th className="p-4 font-medium text-gray-600">操作</th>
             </tr>
           </thead>
           <tbody className="divide-y">
@@ -51,14 +53,11 @@ export default async function SecretsPage() {
                   <td className="p-4">
                     <span className="text-green-600 text-sm">● 有效</span>
                   </td>
-                  <td className="p-4">
-                    <button className="text-blue-600 hover:underline text-sm">详情</button>
-                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="p-8 text-center text-gray-500">
+                <td colSpan={5} className="p-8 text-center text-gray-500">
                   暂无商业秘密记录，点击右上角"新增秘密"添加
                 </td>
               </tr>
