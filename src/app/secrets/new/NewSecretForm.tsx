@@ -8,7 +8,6 @@ export default function NewSecretForm({ categories, levels }: { categories: any[
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -30,22 +29,16 @@ export default function NewSecretForm({ categories, levels }: { categories: any[
     try {
       let filePath = null;
 
-      // 1. 如果有文件，先上传到 Supabase Storage
       if (file) {
         const fileExt = file.name.split('.').pop();
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
         
-        // 上传文件
         const { error: uploadError } = await supabase.storage
           .from('secrets')
-          .upload(fileName, file, {
-            cacheControl: '3600',
-            upsert: false
-          });
+          .upload(fileName, file);
 
         if (uploadError) throw uploadError;
 
-        // 获取公开访问 URL
         const { data: { publicUrl } } = supabase.storage
           .from('secrets')
           .getPublicUrl(fileName);
@@ -53,7 +46,6 @@ export default function NewSecretForm({ categories, levels }: { categories: any[
         filePath = publicUrl;
       }
 
-      // 2. 插入数据到数据库
       const code = 'TS-' + Date.now().toString().slice(-6);
       const { data: secretData, error: secretError } = await supabase
         .from('trade_secrets')
@@ -63,7 +55,7 @@ export default function NewSecretForm({ categories, levels }: { categories: any[
           description: formData.description,
           category_id: formData.category_id || null,
           level_id: formData.level_id || null,
-          file_path: filePath, // 保存文件地址
+          file_path: filePath,
           status: 'active'
         })
         .select()
@@ -71,7 +63,6 @@ export default function NewSecretForm({ categories, levels }: { categories: any[
 
       if (secretError) throw secretError;
 
-      // 3. 自动认证
       await supabase.from('timestamp_certifications').insert({
         secret_id: secretData.id,
         cert_type: 'create',
@@ -90,67 +81,147 @@ export default function NewSecretForm({ categories, levels }: { categories: any[
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-6">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">商业秘密名称 <span className="text-red-500">*</span></label>
-        <input type="text" required className="w-full border border-gray-300 rounded-lg px-4 py-2"
-          placeholder="例如：XX 产品核心源代码" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
+    <div className="max-w-3xl mx-auto">
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">新增商业秘密</h2>
+        <p className="text-gray-500">填写商业秘密信息并上传相关文件，系统将自动完成时间戳认证。</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">分类</label>
-          <select className="w-full border border-gray-300 rounded-lg px-4 py-2"
-            value={formData.category_id} onChange={(e) => setFormData({...formData, category_id: e.target.value})}>
-            <option value="">请选择分类</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>{cat.name}</option>
-            ))}
-          </select>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* 基本信息卡片 */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h3 className="font-bold text-lg mb-6 flex items-center gap-2">
+            <span className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 text-sm">1</span>
+            基本信息
+          </h3>
+          
+          <div className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                商业秘密名称 <span className="text-red-500">*</span>
+              </label>
+              <input 
+                type="text" 
+                required 
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                placeholder="例如：XX 产品核心源代码 v2.0" 
+                value={formData.name} 
+                onChange={(e) => setFormData({...formData, name: e.target.value})} 
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">分类</label>
+                <select 
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 bg-white"
+                  value={formData.category_id} 
+                  onChange={(e) => setFormData({...formData, category_id: e.target.value})}
+                >
+                  <option value="">请选择分类</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">密级</label>
+                <select 
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 bg-white"
+                  value={formData.level_id} 
+                  onChange={(e) => setFormData({...formData, level_id: e.target.value})}
+                >
+                  <option value="">请选择级别</option>
+                  {levels.map((lvl) => (
+                    <option key={lvl.id} value={lvl.id}>{lvl.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">描述</label>
+              <textarea 
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 h-28 focus:ring-2 focus:ring-blue-500 resize-none"
+                placeholder="请简要描述该商业秘密的内容、用途、涉及部门等..." 
+                value={formData.description} 
+                onChange={(e) => setFormData({...formData, description: e.target.value})} 
+              />
+            </div>
+          </div>
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">密级</label>
-          <select className="w-full border border-gray-300 rounded-lg px-4 py-2"
-            value={formData.level_id} onChange={(e) => setFormData({...formData, level_id: e.target.value})}>
-            <option value="">请选择级别</option>
-            {levels.map((lvl) => (
-              <option key={lvl.id} value={lvl.id}>{lvl.name}</option>
-            ))}
-          </select>
+
+        {/* 文件上传卡片 */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h3 className="font-bold text-lg mb-6 flex items-center gap-2">
+            <span className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center text-green-600 text-sm">2</span>
+            上传附件
+          </h3>
+          
+          <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:bg-blue-50 hover:border-blue-400 transition-all relative group">
+            <input 
+              type="file" 
+              onChange={handleFileChange} 
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
+            />
+            <div className="space-y-3">
+              <div className="text-4xl group-hover:scale-110 transition-transform">📁</div>
+              {file ? (
+                <div className="space-y-2">
+                  <p className="text-green-600 font-bold text-lg">✅ 已选择文件</p>
+                  <p className="text-gray-700 font-medium">{file.name}</p>
+                  <p className="text-sm text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <p className="text-gray-700 font-medium">点击或拖拽文件到此处上传</p>
+                  <p className="text-xs text-gray-400">支持 zip, pdf, docx, jpg, png 等格式，单文件不超过 100MB</p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* 文件上传区域 */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">上传附件</label>
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:bg-gray-50 transition relative">
-          <input type="file" onChange={handleFileChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-          <div className="text-2xl mb-2">📁</div>
-          {file ? (
-            <p className="text-green-600 font-medium">已选择：{file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)</p>
-          ) : (
-            <p className="text-gray-500">点击或拖拽文件到此处上传</p>
-          )}
-          <p className="text-xs text-gray-400 mt-2">支持 zip, pdf, docx, jpg 等格式</p>
+        {/* 提示卡片 */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
+          <div className="flex items-start gap-3">
+            <span className="text-2xl">💡</span>
+            <div>
+              <h4 className="font-bold text-blue-900 mb-1">提交后将自动执行</h4>
+              <ul className="text-sm text-blue-800 space-y-1">
+                <li>• 匹配律师制定的认证规则</li>
+                <li>• 生成文件哈希值 (SHA-256)</li>
+                <li>• 申请联合信任时间戳认证</li>
+                <li>• 生成权属证明证书</li>
+              </ul>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">描述</label>
-        <textarea className="w-full border border-gray-300 rounded-lg px-4 py-2 h-24"
-          placeholder="请描述内容..." value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} />
-      </div>
-
-      <div className="bg-blue-50 p-4 rounded text-sm text-blue-800">
-        💡 提交后文件将被加密存储在云端，并自动生成时间戳认证记录。
-      </div>
-
-      <div className="flex gap-4 pt-4">
-        <button type="submit" disabled={loading} className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 font-medium">
-          {loading ? '正在上传并认证...' : '提交并认证'}
-        </button>
-        <button type="button" onClick={() => router.back()} className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">取消</button>
-      </div>
-    </form>
+        {/* 操作按钮 */}
+        <div className="flex gap-4 pt-2">
+          <button 
+            type="submit" 
+            disabled={loading} 
+            className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-xl hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 font-bold text-lg shadow-lg hover:shadow-xl transition-all"
+          >
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="animate-spin">⏳</span> 正在上传并认证...
+              </span>
+            ) : (
+              '提交并认证'
+            )}
+          </button>
+          <button 
+            type="button" 
+            onClick={() => router.back()} 
+            className="px-8 py-4 border-2 border-gray-300 rounded-xl hover:bg-gray-50 font-medium text-gray-700 transition"
+          >
+            取消
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
