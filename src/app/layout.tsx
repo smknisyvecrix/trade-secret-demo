@@ -46,18 +46,16 @@ import { usePathname } from 'next/navigation';
 
 function NavItem({ href, icon, label }: { href: string; icon: string; label: string }) {
   const pathname = usePathname();
-  const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
+  const isActive = pathname ? (href === '/' ? pathname === '/' : pathname.startsWith(href)) : false;
   
   return (
-    <Link 
+    <Link
       href={href}
-      className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-        isActive 
-          ? 'bg-blue-50 text-blue-600 font-bold shadow-sm' 
-          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+      className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+        isActive ? 'bg-blue-50 text-blue-600 font-bold' : 'text-gray-600 hover:bg-gray-100'
       }`}
     >
-      <span className={`text-xl transition-transform ${isActive ? 'scale-110' : 'hover:scale-110'}`}>{icon}</span>
+      <span>{icon}</span>
       <span>{label}</span>
       {isActive && <span className="ml-auto w-1.5 h-1.5 bg-blue-600 rounded-full"></span>}
     </Link>
