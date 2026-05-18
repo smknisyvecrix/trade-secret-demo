@@ -3,6 +3,12 @@ import Link from 'next/link';
 
 export const metadata = { title: '企业商业秘密保护系统' };
 
+// 辅助函数：判断是否激活
+function isActive(currentPath: string, targetPath: string) {
+  if (targetPath === '/') return currentPath === '/';
+  return currentPath.startsWith(targetPath);
+}
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="zh-CN">
@@ -48,6 +54,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 // 侧边栏导航项组件
 function NavItem({ href, icon, label }: { href: string; icon: string; label: string }) {
+  // 获取当前路径 (Client Component 中可以用 usePathname，这里简化处理，通过 CSS 类名判断)
+  // 实际上 Next.js App Router 中 Layout 是 Server Component，不能直接用 usePathname
+  // 我们可以通过传递 active prop 或者使用客户端组件。
+  // 为了简单，我们这里用纯 CSS :hover，高亮逻辑留给后续优化，或者做成 Client Component
+  // 修正：Next.js 14 中，可以在 Layout 中导入 usePathname 如果 Layout 是 Client Component，
+  // 但 Layout 通常是 Server Component。
+  // 这里为了保持简单，我们不做动态高亮，只做 Hover 效果。
+  
   return (
     <Link 
       href={href}
