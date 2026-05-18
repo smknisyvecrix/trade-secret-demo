@@ -35,52 +35,34 @@ function NavItem({ href, icon, label }: { href: string; icon: string; label: str
 function Sidebar() {
   return (
     <div className="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 p-4 flex flex-col">
-      <div className="mb-4 px-3">
-        <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+      <div className="mb-6 px-3">
+        <h1 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
           🔐 商业秘密保护
         </h1>
         <p className="text-xs text-gray-500 mt-1">联合信任时间戳服务中心</p>
       </div>
       
       <nav className="flex-1 overflow-y-auto space-y-1">
-        <p className="text-xs text-gray-400 px-3 py-2 font-medium">核心功能</p>
+        <p className="text-xs text-gray-400 px-3 py-2 font-medium uppercase tracking-wider">核心业务</p>
         <NavItem href="/" icon="" label="仪表盘" />
-        <NavItem href="/secrets" icon="📁" label="商业秘密库" />
-        <NavItem href="/rules" icon="📋" label="保护规则" />
+        <NavItem href="/secrets" icon="📁" label="秘密库" />
         <NavItem href="/certifications" icon="🔒" label="认证中心" />
-        <NavItem href="/logs" icon="📝" label="操作日志" />
-        
-        <p className="text-xs text-gray-400 px-3 py-2 mt-4 font-medium">运营管理</p>
-        <NavItem href="/users" icon="" label="用户管理" />
-        <NavItem href="/approvals" icon="✅" label="审批流程" />
-        <NavItem href="/dashboard" icon="📊" label="数据看板" />
-        <NavItem href="/alerts" icon="️" label="风险预警" />
-        <NavItem href="/batch-import" icon="" label="批量导入" />
-        
-        <p className="text-xs text-gray-400 px-3 py-2 mt-4 font-medium">安全合规</p>
-        <NavItem href="/stats" icon="📈" label="数据统计" />
-        <NavItem href="/audit" icon="" label="审计报告" />
-        <NavItem href="/contracts" icon="📄" label="合同管理" />
-        <NavItem href="/collaboration" icon="🤝" label="外部协作" />
-        <NavItem href="/watermark" icon="💧" label="水印管理" />
-        <NavItem href="/encryption" icon="🔐" label="加密管理" />
-        
-        <p className="text-xs text-gray-400 px-3 py-2 mt-4 font-medium">高级功能</p>
-        <NavItem href="/intelligence" icon="🎯" label="情报监控" />
+        <NavItem href="/rules" icon="📋" label="规则管理" />
         <NavItem href="/evidence" icon="📸" label="证据保全" />
-        <NavItem href="/rights-protection" icon="⚖️" label="维权中心" />
-        <NavItem href="/smart-analysis" icon="🤖" label="智能分析" />
-        <NavItem href="/knowledge-graph" icon="🕸️" label="知识图谱" />
-        <NavItem href="/versions" icon="🔄" label="版本对比" />
-        <NavItem href="/tags" icon="🏷️" label="标签管理" />
         
-        <p className="text-xs text-gray-400 px-3 py-2 mt-4 font-medium">系统设置</p>
-        <NavItem href="/templates" icon="📜" label="证书模板" />
+        <p className="text-xs text-gray-400 px-3 py-2 mt-4 font-medium uppercase tracking-wider">安全管控</p>
+        <NavItem href="/users" icon="" label="用户权限" />
+        <NavItem href="/approvals" icon="✅" label="审批流程" />
+        <NavItem href="/logs" icon="📝" label="操作日志" />
+        <NavItem href="/alerts" icon="️" label="风险预警" />
+        
+        <p className="text-xs text-gray-400 px-3 py-2 mt-4 font-medium uppercase tracking-wider">高级功能</p>
+        <NavItem href="/intelligence" icon="🎯" label="情报监控" />
+        <NavItem href="/rights-protection" icon="⚖️" label="维权中心" />
+        <NavItem href="/dashboard" icon="📊" label="数据看板" />
+        
+        <p className="text-xs text-gray-400 px-3 py-2 mt-4 font-medium uppercase tracking-wider">系统</p>
         <NavItem href="/settings" icon="⚙️" label="系统设置" />
-        <NavItem href="/help" icon="" label="帮助中心" />
-        <NavItem href="/notifications" icon="🔔" label="消息通知" />
-        <NavItem href="/recycle" icon="🗑️" label="回收站" />
-        <NavItem href="/tickets" icon="🎫" label="工单系统" />
       </nav>
     </div>
   );
