@@ -1,6 +1,7 @@
 import './globals.css';
 import Link from 'next/link';
 import { ToastProvider } from '@/components/Toast';
+import { ToastContainer } from '@/components/ToastContainer';
 
 export const metadata = { title: '企业商业秘密保护系统' };
 
