@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import { useToast } from '@/components/Toast';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +15,6 @@ export default function SecretsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterLevel, setFilterLevel] = useState('');
-  const { showToast } = useToast();
 
   useEffect(() => {
     async function fetchSecrets() {
@@ -32,13 +30,13 @@ export default function SecretsPage() {
         
         if (error) {
           console.error('Fetch error:', error);
-          showToast('数据加载失败', 'error');
+          setSecrets([]);
         } else {
           setSecrets(data || []);
         }
       } catch (err) {
         console.error('Error:', err);
-        showToast('数据加载失败', 'error');
+        setSecrets([]);
       } finally {
         setLoading(false);
       }
@@ -46,12 +44,12 @@ export default function SecretsPage() {
     fetchSecrets();
   }, []);
 
-  const filtered = (secrets || []).filter(s => {
+  const filtered = secrets.filter(s => {
     if (!s) return false;
     const matchSearch = !search || 
-      s.name?.toLowerCase().includes(search.toLowerCase()) || 
-      s.code?.toLowerCase().includes(search.toLowerCase());
-    const matchLevel = !filterLevel || s.secret_levels?.code === filterLevel;
+      (s.name && s.name.toLowerCase().includes(search.toLowerCase())) || 
+      (s.code && s.code.toLowerCase().includes(search.toLowerCase()));
+    const matchLevel = !filterLevel || (s.secret_levels && s.secret_levels.code === filterLevel);
     return matchSearch && matchLevel;
   });
 
@@ -75,7 +73,6 @@ export default function SecretsPage() {
         </a>
       </div>
 
-      {/* 搜索和筛选 */}
       <div className="flex gap-4 items-center bg-white p-4 rounded-lg shadow-sm">
         <div className="flex-1 relative">
           <input
@@ -98,7 +95,6 @@ export default function SecretsPage() {
         </select>
       </div>
 
-      {/* 列表 */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <table className="w-full">
           <thead className="bg-gray-50 border-b">
@@ -116,8 +112,8 @@ export default function SecretsPage() {
             {filtered.length > 0 ? (
               filtered.map((secret) => (
                 <tr key={secret.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 text-sm text-gray-900">{secret.code}</td>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{secret.name}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{secret.code || '-'}</td>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{secret.name || '-'}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">{secret.secret_categories?.name || '-'}</td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -134,7 +130,7 @@ export default function SecretsPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">
-                    {new Date(secret.created_at).toLocaleDateString('zh-CN')}
+                    {secret.created_at ? new Date(secret.created_at).toLocaleDateString('zh-CN') : '-'}
                   </td>
                   <td className="px-6 py-4">
                     <a
