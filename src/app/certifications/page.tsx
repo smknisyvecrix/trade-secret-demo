@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useToast } from '@/components/ToastContainer';
+import { useToast } from '@/components/Toast';
 
 export default function CertificationsPage() {
   const [certs, setCerts] = useState<any[]>([]);
