@@ -1,42 +1,33 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
-import Toast from './Toast';
+import { useToast } from './Toast';
 
-type ToastType = 'success' | 'error' | 'info';
-
-interface ToastContextType {
-  showToast: (message: string, type?: ToastType) => void;
-}
-
-const ToastContext = createContext<ToastContextType | undefined>(undefined);
-
-export function ToastProvider({ children }: { children: ReactNode }) {
-  const [toasts, setToasts] = useState<{ id: number; message: string; type: ToastType }[]>([]);
-
-  const showToast = (message: string, type: ToastType = 'success') => {
-    const id = Date.now();
-    setToasts(prev => [...prev, { id, message, type }]);
-  };
-
-  const removeToast = (id: number) => {
-    setToasts(prev => prev.filter(t => t.id !== id));
-  };
+export function ToastContainer() {
+  const { toasts, removeToast } = useToast();
 
   return (
-    <ToastContext.Provider value={{ showToast }}>
-      {children}
-      <div className="fixed top-4 right-4 z-50 space-y-2">
-        {toasts.map(toast => (
-          <Toast key={toast.id} message={toast.message} type={toast.type} onClose={() => removeToast(toast.id)} />
-        ))}
-      </div>
-    </ToastContext.Provider>
+    <div className="fixed top-4 right-4 z-50 space-y-2">
+      {toasts.map((toast) => (
+        <div
+          key={toast.id}
+          className={`
+            flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-white text-sm font-medium
+            animate-slide-in-right
+            ${toast.type === 'success' ? 'bg-green-500' : ''}
+            ${toast.type === 'error' ? 'bg-red-500' : ''}
+            ${toast.type === 'info' ? 'bg-blue-500' : ''}
+          `}
+        >
+          <span>{toast.type === 'success' ? '✅' : toast.type === 'error' ? '❌' : 'ℹ️'}</span>
+          <span>{toast.message}</span>
+          <button
+            onClick={() => removeToast(toast.id)}
+            className="ml-2 text-white hover:text-gray-200"
+          >
+            ✕
+          </button>
+        </div>
+      ))}
+    </div>
   );
-}
-
-export function useToast() {
-  const context = useContext(ToastContext);
-  if (!context) throw new Error('useToast must be used within ToastProvider');
-  return context;
 }
