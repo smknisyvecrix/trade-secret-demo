@@ -59,7 +59,7 @@ export default function CertificationsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fadeIn">
       <h1 className="text-2xl font-bold text-gray-900">认证中心</h1>
 
       <div className="flex gap-4 items-center bg-white p-4 rounded-lg shadow-sm">
@@ -69,39 +69,39 @@ export default function CertificationsPage() {
             placeholder="搜索认证记录..."
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
-          <span className="absolute left-3 top-2.5 text-gray-400"></span>
+          <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
         </div>
       </div>
 
       <div className="flex gap-2">
         <button 
           onClick={() => setFilterStatus('all')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            filterStatus === 'all' ? 'bg-blue-600 text-white' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            filterStatus === 'all' ? 'bg-blue-600 text-white shadow-md' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
           }`}
         >
           全部
         </button>
         <button 
           onClick={() => setFilterStatus('completed')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            filterStatus === 'completed' ? 'bg-blue-600 text-white' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            filterStatus === 'completed' ? 'bg-green-600 text-white shadow-md' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
           }`}
         >
           已完成
         </button>
         <button 
           onClick={() => setFilterStatus('processing')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            filterStatus === 'processing' ? 'bg-blue-600 text-white' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            filterStatus === 'processing' ? 'bg-blue-500 text-white shadow-md' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
           }`}
         >
           进行中
         </button>
         <button 
           onClick={() => setFilterStatus('pending')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            filterStatus === 'pending' ? 'bg-blue-600 text-white' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            filterStatus === 'pending' ? 'bg-yellow-500 text-white shadow-md' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
           }`}
         >
           待处理

@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 export default function SecretDetailClient({ secret, certs }: any) {
   const [activeTab, setActiveTab] = useState('info');
+  const [generating, setGenerating] = useState(false);
 
   const tabs = [
     { id: 'info', label: '基本信息' },
@@ -12,17 +13,28 @@ export default function SecretDetailClient({ secret, certs }: any) {
     { id: 'logs', label: '访问日志' },
   ];
 
+  const handleGenerateEvidence = async () => {
+    setGenerating(true);
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    setGenerating(false);
+    alert('证据包已生成！包含时间戳证书、文件哈希值、认证时间线等。');
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fadeIn">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{secret.name}</h1>
           <p className="text-sm text-gray-500 mt-1">编号：{secret.code}</p>
         </div>
         <div className="flex gap-3">
-          <button className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2 shadow-md hover:shadow-lg">
-            <span>📦</span>
-            <span>生成证据包</span>
+          <button 
+            onClick={handleGenerateEvidence}
+            disabled={generating}
+            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2 shadow-md hover:shadow-lg disabled:opacity-50"
+          >
+            <span>{generating ? '' : '📦'}</span>
+            <span>{generating ? '生成中...' : '生成证据包'}</span>
           </button>
           <button className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
             编辑
@@ -93,7 +105,7 @@ export default function SecretDetailClient({ secret, certs }: any) {
             <div className="space-y-4">
               {certs.length > 0 ? (
                 certs.map((cert: any, index: number) => (
-                  <div key={cert.id} className="flex gap-4">
+                  <div key={cert.id} className="flex gap-4 animate-slideIn">
                     <div className="flex flex-col items-center">
                       <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
                       {index < certs.length - 1 && <div className="w-0.5 h-full bg-gray-200 mt-1"></div>}
@@ -124,12 +136,12 @@ export default function SecretDetailClient({ secret, certs }: any) {
                   </tr>
                 </thead>
                 <tbody className="divide-y">
-                  <tr>
+                  <tr className="hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm">张三</td>
                     <td className="px-4 py-3 text-sm">读取、编辑</td>
                     <td className="px-4 py-3"><span className="text-green-600 text-xs">生效中</span></td>
                   </tr>
-                  <tr>
+                  <tr className="hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm">李四</td>
                     <td className="px-4 py-3 text-sm">仅读取</td>
                     <td className="px-4 py-3"><span className="text-green-600 text-xs">生效中</span></td>
@@ -150,12 +162,12 @@ export default function SecretDetailClient({ secret, certs }: any) {
                   </tr>
                 </thead>
                 <tbody className="divide-y">
-                  <tr>
+                  <tr className="hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm">查看详细信息</td>
                     <td className="px-4 py-3 text-sm">张三</td>
                     <td className="px-4 py-3 text-sm text-gray-500">2026-05-19 10:30</td>
                   </tr>
-                  <tr>
+                  <tr className="hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm">下载文件</td>
                     <td className="px-4 py-3 text-sm">李四</td>
                     <td className="px-4 py-3 text-sm text-gray-500">2026-05-18 15:20</td>
