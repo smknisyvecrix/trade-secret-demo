@@ -61,8 +61,10 @@ export default async function SecretsPage() {
                       已认证
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-800 cursor-pointer">
-                    查看详情
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <Link href={`/secrets/${secret.id}`} className="text-blue-600 hover:text-blue-800 font-medium">
+                      查看详情
+                    </Link>
                   </td>
                 </tr>
               ))
