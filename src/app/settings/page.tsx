@@ -115,7 +115,7 @@ export default function SettingsPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">备份保留天数</label>
-                <input type="number" defaultValue={30" className="w-full px-4 py-2 border rounded-lg" />
+                <input type="number" defaultValue="30" className="w-full px-4 py-2 border rounded-lg" />
               </div>
               <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
                 立即备份
