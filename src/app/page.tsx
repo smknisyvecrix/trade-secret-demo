@@ -1,157 +1,120 @@
 'use client';
-export const dynamic = 'force-dynamic';
 
-import { createClient } from '@supabase/supabase-js';
+import { useState } from 'react';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
-function StatCard({ icon, label, value, color }: any) {
+function StatCard({ icon, label, value, color, trend }: any) {
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 animate-fadeIn">
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-3xl">{icon}</span>
-        <span className={`text-xs font-medium px-2 py-1 rounded-full ${color}`}>
-          +12%
-        </span>
-      </div>
-      <p className="text-3xl font-bold text-gray-900">{value}</p>
-      <p className="text-sm text-gray-500 mt-1">{label}</p>
-    </div>
-  );
-}
-
-function TodoItem({ text, urgent }: any) {
-  return (
-    <div className={`flex items-center gap-3 p-3 rounded-lg hover:shadow-md transition-all cursor-pointer ${urgent ? 'bg-red-50 border border-red-100 hover:bg-red-100' : 'bg-gray-50 hover:bg-gray-100'}`}>
-      <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-      <span className={`text-sm ${urgent ? 'text-red-700 font-medium' : 'text-gray-700'}`}>{text}</span>
-      {urgent && <span className="ml-auto text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded animate-pulse">紧急</span>}
-    </div>
-  );
-}
-
-function TrendChart() {
-  const data = [3, 5, 2, 8, 6, 9, 4];
-  const max = Math.max(...data);
-  const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
-  
-  return (
-    <div className="bg-white rounded-xl shadow-sm p-6 animate-fadeIn">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">近 7 天认证趋势</h3>
-      <div className="flex items-end justify-between h-40 gap-2">
-        {data.map((value, i) => (
-          <div key={i} className="flex-1 flex flex-col items-center gap-2">
-            <div className="w-full flex flex-col items-center">
-              <span className="text-xs text-gray-500 mb-1">{value}</span>
-              <div 
-                className="w-full bg-gradient-to-t from-blue-600 to-indigo-500 rounded-t-md transition-all hover:from-blue-700 hover:to-indigo-600 hover:shadow-lg"
-                style={{ height: `${(value / max) * 100}px` }}
-              ></div>
-            </div>
-            <span className="text-xs text-gray-400">{days[i]}</span>
-          </div>
-        ))}
+    <div className="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition-all cursor-pointer group">
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-sm text-gray-500 mb-1">{label}</p>
+          <p className="text-2xl font-bold text-gray-900">{value}</p>
+          <p className={`text-xs mt-2 ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            {trend >= 0 ? '↑' : '↓'} {Math.abs(trend)}% 较上月
+          </p>
+        </div>
+        <span className="text-3xl group-hover:scale-110 transition-transform">{icon}</span>
       </div>
     </div>
   );
 }
 
-export default async function HomePage() {
-  const [{ count: secretCount }, { count: certCount }] = await Promise.all([
-    supabase.from('trade_secrets').select('*', { count: 'exact', head: true }),
-    supabase.from('timestamp_certifications').select('*', { count: 'exact', head: true }),
-  ]);
+function TodoItem({ text, urgent, time }: any) {
+  return (
+    <div className={`flex items-start gap-3 p-3 rounded-lg border ${urgent ? 'bg-red-50 border-red-100' : 'bg-white border-gray-100'} hover:shadow-sm transition-all`}>
+      <input type="checkbox" className="mt-1 w-4 h-4 rounded border-gray-300 text-blue-600" />
+      <div className="flex-1">
+        <p className={`text-sm ${urgent ? 'text-red-700 font-medium' : 'text-gray-700'}`}>{text}</p>
+        <p className="text-xs text-gray-400 mt-1">{time}</p>
+      </div>
+      {urgent && <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded">紧急</span>}
+    </div>
+  );
+}
 
+function ActivityItem({ icon, text, time, color }: any) {
+  return (
+    <div className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+      <span className={`w-2 h-2 rounded-full mt-2 ${color}`}></span>
+      <div className="flex-1">
+        <p className="text-sm text-gray-700">{text}</p>
+        <p className="text-xs text-gray-400 mt-0.5">{time}</p>
+      </div>
+    </div>
+  );
+}
+
+function QuickAction({ icon, label, desc, href, color }: any) {
+  return (
+    <a href={href} className={`block p-4 rounded-xl ${color} hover:shadow-md transition-all group`}>
+      <span className="text-2xl group-hover:scale-110 transition-transform inline-block">{icon}</span>
+      <p className="font-medium text-sm mt-2">{label}</p>
+      <p className="text-xs opacity-70 mt-0.5">{desc}</p>
+    </a>
+  );
+}
+
+export default function HomePage() {
   return (
     <div className="space-y-6">
-      <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-xl p-8 text-white shadow-lg relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
-        <button 
-          onClick={() => window.location.reload()}
-          className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-sm transition-all flex items-center gap-1 hover:scale-105"
-        >
-          🔄 刷新
-        </button>
-        <h1 className="text-3xl font-bold mb-2 relative z-10"> 欢迎回来，管理员</h1>
-        <p className="text-blue-100 relative z-10">这里是您的商业秘密保护系统概览</p>
+      <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-xl p-6 text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20"></div>
+        <div className="relative z-10">
+          <h1 className="text-2xl font-bold mb-1">欢迎回来，管理员</h1>
+          <p className="text-blue-100 text-sm">今天是 2026 年 5 月 19 日，系统运行正常</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard icon="📁" label="商业秘密总数" value={secretCount || 0} color="bg-blue-100 text-blue-700" />
-        <StatCard icon="" label="已认证数量" value={certCount || 0} color="bg-green-100 text-green-700" />
-        <StatCard icon="📋" label="规则总数" value={3} color="bg-purple-100 text-purple-700" />
-        <StatCard icon="⚠️" label="待处理事项" value={5} color="bg-orange-100 text-orange-700" />
+      <div className="grid grid-cols-4 gap-4">
+        <StatCard icon="📁" label="商业秘密总数" value="1,234" color="blue" trend={12} />
+        <StatCard icon="🔒" label="已认证数量" value="987" color="green" trend={8} />
+        <StatCard icon="" label="活跃用户数" value="156" color="purple" trend={-3} />
+        <StatCard icon="⚠️" label="待处理事项" value="5" color="orange" trend={25} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 animate-fadeIn">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">快捷入口</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <a href="/secrets/new" className="flex items-center gap-3 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl hover:shadow-md transition-all group">
-              <span className="text-3xl group-hover:scale-110 transition-transform">➕</span>
-              <div>
-                <span className="font-medium text-blue-700 block">新增秘密</span>
-                <span className="text-xs text-blue-500">记录新的商业秘密</span>
-              </div>
-            </a>
-            <a href="/rules/import" className="flex items-center gap-3 p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl hover:shadow-md transition-all group">
-              <span className="text-3xl group-hover:scale-110 transition-transform">📥</span>
-              <div>
-                <span className="font-medium text-purple-700 block">导入规则</span>
-                <span className="text-xs text-purple-500">批量导入保护规则</span>
-              </div>
-            </a>
-            <a href="/certifications" className="flex items-center gap-3 p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl hover:shadow-md transition-all group">
-              <span className="text-3xl group-hover:scale-110 transition-transform">🔒</span>
-              <div>
-                <span className="font-medium text-green-700 block">查看认证</span>
-                <span className="text-xs text-green-500">管理认证记录</span>
-              </div>
-            </a>
-            <a href="/logs" className="flex items-center gap-3 p-4 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl hover:shadow-md transition-all group">
-              <span className="text-3xl group-hover:scale-110 transition-transform">📊</span>
-              <div>
-                <span className="font-medium text-orange-700 block">操作日志</span>
-                <span className="text-xs text-orange-500">查看系统操作记录</span>
-              </div>
-            </a>
+      <div className="grid grid-cols-3 gap-4">
+        <div className="col-span-2 bg-white rounded-xl shadow-sm p-5">
+          <h2 className="font-semibold text-gray-900 mb-4">快捷入口</h2>
+          <div className="grid grid-cols-4 gap-3">
+            <QuickAction icon="➕" label="新增秘密" desc="记录新的商业秘密" href="/secrets/new" color="bg-blue-50 text-blue-700" />
+            <QuickAction icon="📥" label="导入规则" desc="批量导入保护规则" href="/rules/import" color="bg-purple-50 text-purple-700" />
+            <QuickAction icon="🔒" label="查看认证" desc="管理认证记录" href="/certifications" color="bg-green-50 text-green-700" />
+            <QuickAction icon="📊" label="数据看板" desc="可视化统计分析" href="/dashboard" color="bg-orange-50 text-orange-700" />
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-6 animate-fadeIn">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">待办事项</h2>
-          <div className="space-y-3">
-            <TodoItem text="审核新导入的保护规则" urgent={true} />
-            <TodoItem text="更新核心机密分类标准" urgent={true} />
-            <TodoItem text="处理 3 个认证申请" urgent={false} />
-            <TodoItem text="备份本月认证数据" urgent={false} />
+        <div className="bg-white rounded-xl shadow-sm p-5">
+          <h2 className="font-semibold text-gray-900 mb-4">待办事项</h2>
+          <div className="space-y-2">
+            <TodoItem text="审核新导入的保护规则" urgent={true} time="10 分钟前" />
+            <TodoItem text="处理 3 个认证申请" urgent={false} time="1 小时前" />
+            <TodoItem text="更新核心机密分类标准" urgent={true} time="2 小时前" />
+            <TodoItem text="备份本月认证数据" urgent={false} time="昨天" />
           </div>
         </div>
       </div>
 
-      <TrendChart />
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-white rounded-xl shadow-sm p-5">
+          <h2 className="font-semibold text-gray-900 mb-4">近 7 天认证趋势</h2>
+          <div className="flex items-end justify-between h-32 gap-2">
+            {[3, 5, 2, 8, 6, 9, 4].map((h, i) => (
+              <div key={i} className="flex-1 flex flex-col items-center">
+                <span className="text-xs text-gray-500 mb-1">{h}</span>
+                <div className="w-full bg-gradient-to-t from-blue-600 to-blue-400 rounded-t transition-all hover:from-blue-700 hover:to-blue-500" style={{ height: `${h * 12}px` }}></div>
+                <span className="text-xs text-gray-400 mt-2">{['一', '二', '三', '四', '五', '六', '日'][i]}</span>
+              </div>
+            ))}
+          </div>
+        </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-6 animate-fadeIn">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">最近活动</h2>
-        <div className="space-y-3">
-          <div className="flex items-center gap-3 text-sm p-2 hover:bg-gray-50 rounded-lg transition-colors">
-            <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
-            <span className="text-gray-600">用户 张三 新增了秘密「客户名单 Q1」</span>
-            <span className="ml-auto text-gray-400">2 小时前</span>
-          </div>
-          <div className="flex items-center gap-3 text-sm p-2 hover:bg-gray-50 rounded-lg transition-colors">
-            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-            <span className="text-gray-600">秘密「技术方案 V2」完成时间戳认证</span>
-            <span className="ml-auto text-gray-400">5 小时前</span>
-          </div>
-          <div className="flex items-center gap-3 text-sm p-2 hover:bg-gray-50 rounded-lg transition-colors">
-            <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
-            <span className="text-gray-600">管理员导入了新的保护规则</span>
-            <span className="ml-auto text-gray-400">1 天前</span>
+        <div className="bg-white rounded-xl shadow-sm p-5">
+          <h2 className="font-semibold text-gray-900 mb-4">最近活动</h2>
+          <div className="space-y-1">
+            <ActivityItem icon="🔵" text="用户 张三 新增了秘密「客户名单 Q1」" time="2 小时前" color="bg-blue-500" />
+            <ActivityItem icon="🟢" text="秘密「技术方案 V2」完成时间戳认证" time="5 小时前" color="bg-green-500" />
+            <ActivityItem icon="🟣" text="管理员导入了新的保护规则" time="1 天前" color="bg-purple-500" />
+            <ActivityItem icon="🟠" text="用户 李四 下载了「财务报表」" time="1 天前" color="bg-orange-500" />
           </div>
         </div>
       </div>
