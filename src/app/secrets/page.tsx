@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
+import { SkeletonTable } from '@/components/Skeleton';
 
 export const dynamic = 'force-dynamic';
 
@@ -54,11 +55,7 @@ export default function SecretsPage() {
   });
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
+    return <SkeletonTable />;
   }
 
   return (
