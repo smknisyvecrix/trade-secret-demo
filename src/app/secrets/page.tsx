@@ -15,7 +15,9 @@ export default async function SecretsPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">商业秘密库</h2>
-        <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">+ 新增秘密</button>
+        <Link href="/secrets/new" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+          + 新增秘密
+        </Link>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -57,7 +59,7 @@ export default async function SecretsPage() {
             ) : (
               <tr>
                 <td colSpan={6} className="p-8 text-center text-gray-500">
-                  暂无商业秘密记录
+                  暂无商业秘密记录，点击右上角"新增秘密"添加
                 </td>
               </tr>
             )}
