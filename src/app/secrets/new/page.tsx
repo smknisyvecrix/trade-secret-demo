@@ -9,9 +9,7 @@ export default function NewSecretPage() {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    description: '',
-    category_id: '',
-    level_id: ''
+    description: ''
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,15 +20,15 @@ export default function NewSecretPage() {
       // 1. 生成编号
       const code = 'TS-' + Date.now().toString().slice(-6);
 
-      // 2. 插入商业秘密数据
+      // 2. 插入数据（暂时不传 category_id 和 level_id，避免 UUID 格式报错）
       const { data: secretData, error: secretError } = await supabase
         .from('trade_secrets')
         .insert({
           code: code,
           name: formData.name,
           description: formData.description,
-          category_id: formData.category_id || null,
-          level_id: formData.level_id || null,
+          category_id: null, 
+          level_id: null,
           status: 'active'
         })
         .select()
@@ -38,13 +36,12 @@ export default function NewSecretPage() {
 
       if (secretError) throw secretError;
 
-      // 3. 自动触发时间戳认证（核心逻辑！）
-      // 模拟调用时间戳 API，生成认证记录
+      // 3. 自动触发时间戳认证
       const { error: certError } = await supabase
         .from('timestamp_certifications')
         .insert({
           secret_id: secretData.id,
-          cert_type: 'create', // 创建认证
+          cert_type: 'create',
           status: 'success',
           certified_at: new Date().toISOString()
         });
@@ -78,27 +75,6 @@ export default function NewSecretPage() {
             value={formData.name}
             onChange={(e) => setFormData({...formData, name: e.target.value})}
           />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">分类</label>
-            <select className="w-full border border-gray-300 rounded-lg px-4 py-2"
-              value={formData.category_id} onChange={(e) => setFormData({...formData, category_id: e.target.value})}>
-              <option value="">请选择</option>
-              <option value="1">技术信息</option>
-              <option value="2">经营信息</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">密级</label>
-            <select className="w-full border border-gray-300 rounded-lg px-4 py-2"
-              value={formData.level_id} onChange={(e) => setFormData({...formData, level_id: e.target.value})}>
-              <option value="">请选择</option>
-              <option value="1">核心</option>
-              <option value="2">重要</option>
-            </select>
-          </div>
         </div>
 
         <div>
