@@ -6,9 +6,9 @@ export default function RightsProtectionPage() {
   const [activeTab, setActiveTab] = useState('cases');
 
   const cases = [
-    { id: 'CASE-001', title: '诉前证据保全申请', type: '诉讼', status: 'processing', court: '北京知识产权法院', lawyer: '张律师', created: '2026-05-10', updated: '2026-05-18' },
-    { id: 'CASE-002', title: '侵权投诉 - 某电商平台', type: '投诉', status: 'resolved', court: '-', lawyer: '李律师', created: '2026-04-20', updated: '2026-05-15' },
-    { id: 'CASE-003', title: '商业秘密侵权诉讼', type: '诉讼', status: 'pending', court: '上海知识产权法院', lawyer: '王律师', created: '2026-05-15', updated: '2026-05-15' },
+    { id: 'CASE-001', title: '诉前证据保全申请', type: 'litigation', status: 'processing', court: '北京知识产权法院', lawyer: '张律师', created: '2026-05-10', updated: '2026-05-18' },
+    { id: 'CASE-002', title: '侵权投诉 - 某电商平台', type: 'complaint', status: 'resolved', court: '-', lawyer: '李律师', created: '2026-04-20', updated: '2026-05-15' },
+    { id: 'CASE-003', title: '商业秘密侵权诉讼', type: 'litigation', status: 'pending', court: '上海知识产权法院', lawyer: '王律师', created: '2026-05-15', updated: '2026-05-15' },
   ];
 
   const lawyers = [
@@ -19,7 +19,8 @@ export default function RightsProtectionPage() {
 
   const statusClass: any = { pending: 'bg-yellow-100 text-yellow-700', processing: 'bg-blue-100 text-blue-700', resolved: 'bg-green-100 text-green-700' };
   const statusText: any = { pending: '待立案', processing: '审理中', resolved: '已结案' };
-  const typeClass: any = { 诉讼：'bg-purple-100 text-purple-700', 投诉：'bg-blue-100 text-blue-700' };
+  const typeClass: any = { litigation: 'bg-purple-100 text-purple-700', complaint: 'bg-blue-100 text-blue-700' };
+  const typeText: any = { litigation: '诉讼', complaint: '投诉' };
 
   return (
     <div className="space-y-6">
@@ -28,7 +29,7 @@ export default function RightsProtectionPage() {
           <h1 className="text-2xl font-bold text-gray-900">维权中心</h1>
           <p className="text-sm text-gray-500 mt-1">管理侵权维权案件与律师协作</p>
         </div>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">➕ 新建案件</button>
+        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">+ 新建案件</button>
       </div>
 
       <div className="grid grid-cols-4 gap-4">
@@ -77,7 +78,7 @@ export default function RightsProtectionPage() {
                   <tr key={c.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm font-medium text-blue-600">{c.id}</td>
                     <td className="px-4 py-3 text-sm font-medium">{c.title}</td>
-                    <td className="px-4 py-3"><span className={`px-2 py-1 text-xs rounded-full ${typeClass[c.type]}`}>{c.type}</span></td>
+                    <td className="px-4 py-3"><span className={`px-2 py-1 text-xs rounded-full ${typeClass[c.type]}`}>{typeText[c.type]}</span></td>
                     <td className="px-4 py-3"><span className={`px-2 py-1 text-xs rounded-full ${statusClass[c.status]}`}>{statusText[c.status]}</span></td>
                     <td className="px-4 py-3 text-sm">{c.lawyer}</td>
                     <td className="px-4 py-3 text-sm text-gray-500">{c.updated}</td>
