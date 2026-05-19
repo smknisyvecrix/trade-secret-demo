@@ -30,7 +30,7 @@ export default function EvidencePage() {
     notarized: 44,
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'collecting': return 'bg-yellow-100 text-yellow-800';
       case 'solidified': return 'bg-blue-100 text-blue-800';
@@ -39,7 +39,7 @@ export default function EvidencePage() {
     }
   };
 
-  const getStatusText = (status) => {
+  const getStatusText = (status: string) => {
     switch (status) {
       case 'collecting': return '收集';
       case 'solidified': return '已固定';
@@ -48,11 +48,11 @@ export default function EvidencePage() {
     }
   };
 
-  const getNotarizedColor = (notarized) => {
+  const getNotarizedColor = (notarized: string) => {
     return notarized === 'completed' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600';
   };
 
-  const getNotarizedText = (notarized) => {
+  const getNotarizedText = (notarized: string) => {
     return notarized === 'completed' ? '已公证' : '待公证';
   };
 
